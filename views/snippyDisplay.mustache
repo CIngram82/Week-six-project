@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Your Snippy Snipps</title>
+    <link rel="stylesheet" href="style.css">
+
+  </head>
+  <body>
+    <h1>This is the page to view all Snippy snipets</h1>
+    {{#snippySnips}}
+    <ul>
+    <h2>{{title}}</h2>
+    <h3>Snippy Snipp</h3>
+    <pre><code>{{body}}</code></pre> <!-- Think of a way to get this to show on more then one line -->
+    <h3>Notes:</h3>
+    <p>{{notes}}</p>
+    <h3>Language</h3>
+    <h4>{{language}}</h4>
+    <h3>Tags</h3>
+    <ul>
+    <li>{{tags}}</li> <!-- Make this a ul and make tags an array -->
+    </ul>
+  </ul>
+  <form class="" action="delete/{{title}}" method="post">
+    <input type="submit" name="" value="Delete this snippy">
+  </form>
+    {{/snippySnips}}
+    <!-- <form class="" action="makeSnippy" method="post">
+      <input type="submit" name="" value="Create a new snippy snipp">
+    </form> -->
+    <a href="/SnippySearch">Search from Snippy Snipps</a>
+    <a href="/createASnippy">Make a new Snippy Snipp!</a>
+    <form class="logout" action="/logout" method="post">
+      <input type="submit" name="" value="Logout">
+    </form>
+  </body>
+</html>
