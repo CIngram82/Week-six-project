@@ -3,21 +3,25 @@
   <head>
     <meta charset="utf-8">
     <title>Snippy Snipps Search</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
   </head>
   <body>
     <h1>Search all the snipps here!</h1>
     <form class="" action="search" method="post">
       <h4>Search by:</h4>
-      <label for="">Title:</label>
-      <input type="text" name="title">
-      <label for="">User Name</label>
-      <input type="text" name="username" value="">
       <label for="">Language</label>
+      <input type="hidden" name="searchType" value="language">
       <input type="text" name="language" value="">
+      <input type="submit" name="submitButton" value="Search all the snippy snipp by Language">
+    </form>
+    <form class="" action="search" method="post">
       <label for="">Tags:</label>
+      <input type="hidden" name="searchType" value="tags">
       <input type="text" name="tags" value="">
-      <input type="submit" name="submitButton" value="Search all the snippy snipp">
+      <input type="submit" name="submitButton" value="Search all the snippy snipp by Tag">
+    </form>
+    <form class="logout" action="/logout" method="post">
+      <input type="submit" name="" value="Logout">
     </form>
   </body>
 </html>

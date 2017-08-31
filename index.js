@@ -6,6 +6,8 @@ const RegUser = require('./modules/registrationSchema');
 const Snipps = require('./modules/snippitsSchema');
 const session = require('express-session');
 const bodyparse = require('body-parser');
+const bluebird = require('bluebird');
+mongoose.Promise = require('bluebird');
 mongoose.connect('mongodb://localhost:27017/test');
 
 server.use(bodyparse.urlencoded({
@@ -26,6 +28,110 @@ server.use(session({
 //
 // Above is working
 //
+
+// Search function by language or tags
+server.post('/search', function(req, res) {
+  if (req.session.who !== undefined) {
+    let language = req.body.language;
+    let tags = req.body.tags;
+    let searchType = req.body.searchType;
+    if (searchType === "tags") {
+      Snipps.find({
+          tags: new RegExp(tags)
+        })
+        .then(function(snipps) {
+          res.render('snippyDisplay', {
+            snippySnips: snipps,
+            message: "You searched for " + tags,
+          })
+        });
+    } else if (searchType === "language") {
+      Snipps.find({
+          tags: new RegExp(tags)
+        })
+        .then(function(snipps) {
+          res.render('snippyDisplay', {
+            snippySnips: snipps,
+            message: "You searched for " + language,
+          })
+        });
+    } else {
+      res.render('snippyDisplay', {
+        message: "How did you mess that up?",
+      })
+    }
+
+  } else {
+    res.render('index', {
+      message: "Please Login."
+    });
+  }
+});
+
+// display a single snippy when title is clicked on
+server.get('/singleSnippy/:id', function(req, res) {
+  const id = req.params.id;
+  if (req.session.who !== undefined) {
+    Snipps.find({
+        _id: id
+      })
+      .then(function(snipp) {
+        res.render('snippyDisplay', {
+          singleSnip: snipp
+        })
+      });
+  } else {
+    res.render('index', {
+      message: "Please Login."
+    });
+  }
+});
+
+
+//
+// Below is working-ish
+//
+
+server.get('/createASnippy', function(req, res) {
+  if (req.session.who !== undefined) {
+    res.render('createASnippy')
+    return;
+  } else {
+    res.render('index', {
+      message: "Please Login."
+    });
+  }
+});
+
+server.get('/snippyDisplay', function(req, res) { // TODO fix this once using mongo for snippys
+  if (req.session.who !== undefined) {
+    Snipps.find()
+      .then(function(snipps) {
+        res.render('snippyDisplay', {
+          snippySnips: snipps
+        })
+      });
+  } else {
+    res.render('index', {
+      message: "Please Login."
+    });
+  }
+});
+
+server.get('/SnippySearch', function(req, res) {
+  if (req.session.who !== undefined) {
+    res.render('SnippySearch')
+    return;
+  } else {
+    res.render('index', {
+      message: "Please Login."
+    });
+  }
+});
+
+server.get('/', function(req, res) {
+  res.render('index');
+});
 
 server.post('/login', function(req, res) {
   RegUser.findOne({
@@ -61,78 +167,24 @@ server.post('/regNewAcct', function(req, res) {
   });
 });
 
-server.get('/snippyDisplay', function(req, res) { // TODO fix this once using mongo for snippys
-  if (req.session.who !== undefined) {
-    Snipps.find()
-      .then(function(snipps) {
-        res.render('snippyDisplay', {
-          snippySnips: snipps
-        })
-      });
-  } else {
-    res.render('index',{
-      message: "Please Login."
-    });
-  }
-});
-
-server.post('/search', function(req,res){
- let title = req.body.title;
- let username = req.body.username;
- let language = req.body.language;
- let tags = req.body.tags;
-
-  Snipps.find()
-    .where('title')
-})
-//
-// Below is tested and working
-//
-
-server.get('/SnippySearch', function(req,res){
-  if (req.session.who !== undefined) {
-    res.render('SnippySearch')
-      return;
-  } else {
-    res.render('index',{
-    message: "Please Login."
-  });
-  }
-});
-
-server.get('/', function(req, res) {
-  res.render('index');
-});
-
 server.post('/regAccount', function(req, res) {
   res.render('registration');
 });
 
-server.get('/createASnippy', function(req, res) {
-  if (req.session.who !== undefined) {
-        res.render('createASnippy')
-        return;
-  } else {
-    res.render('index',{
-      message: "Please Login."
-    });
-  }
-});
-
 server.post('/addSnippy', function(req, res) {
   Snipps.create({
-    title: req.body.title,
-    body: req.body.codeBody,
-    notes: req.body.notes,
-    language: req.body.language,
-    tags: req.body.tags,
-    createdBy: req.session.who
-  })
-  .then((function(snipps) {
-    res.render('snippyDisplay', {
-      snippySnips: snipps
+      title: req.body.title,
+      body: req.body.codeBody,
+      notes: req.body.notes,
+      language: req.body.language,
+      tags: req.body.tags,
+      createdBy: req.session.who
     })
-  }));
+    .then((function(snipps) {
+      res.render('snippyDisplay', {
+        snippySnips: snipps
+      })
+    }));
 });
 
 server.post('/logout', function(req, res) {
@@ -147,18 +199,12 @@ server.listen(3000, function() {
   console.log('Running with Snippy snipps');
 });
 
-//TODO: make me happy
-// a little CSS work
-// split functions up and move things down to working section.
 
 // TODO: Normal mode
-// have a comprehensive set of tests for all controllers and models
-// allow you to see a list of all your snippets
-// allow you to see a list of all your snippets for a specific language
-// allow you to see a list of all your snippets for a specific tag
-// allow you to look at an individual snippet
+// have a single test to show that I understand how to use testing. use JEST
 
 // TODO HARDMODE
+
 // Optimally, your snippet organizer should let people not only look at their
 // own snippets, but also look at others' snippets. If you get to this part,
 // your application should:

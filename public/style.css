@@ -1,4 +1,9 @@
 
-body{
-
+form{
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+body>ul{
+  border: 1px solid blue;
 }
