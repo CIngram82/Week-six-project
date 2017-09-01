@@ -69,6 +69,7 @@ server.post('/search', function(req, res) {
 });
 
 // display a single snippy when title is clicked on
+
 server.get('/singleSnippy/:id', function(req, res) {
   const id = req.params.id;
   if (req.session.who !== undefined) {
@@ -86,7 +87,6 @@ server.get('/singleSnippy/:id', function(req, res) {
     });
   }
 });
-
 
 //
 // Below is working-ish

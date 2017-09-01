@@ -15,5 +15,8 @@
     "express-session": "^1.15.5",
     "mongoose": "^4.10.8",
     "mustache-express": "^1.2.5"
+  },
+  "devDependencies": {
+    "jest": "^20.0.4"
   }
 }
